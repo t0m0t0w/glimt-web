@@ -16,6 +16,12 @@
 
   let container: HTMLElement | undefined = $state();
 
+  $effect(() => {
+    if (center) {
+      provider.setCenter(center[0], center[1]);
+    }
+  });
+
   onMount(async () => {
     if (container) {
       await provider.initialize({
