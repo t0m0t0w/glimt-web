@@ -13,7 +13,7 @@ export class MapboxProvider implements MapProvider {
     mapboxgl.accessToken = this.apiKey;
     this.map = new mapboxgl.Map({
       container: options.container,
-      style: 'mapbox://styles/mapbox/light-v11',
+      style: 'mapbox://styles/mapbox/standard',
       center: options.center,
       zoom: options.zoom
     });
