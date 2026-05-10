@@ -35,6 +35,10 @@ export class MapboxProvider implements MapProvider {
     marker.addTo(this.map);
   }
 
+  getMap(): mapboxgl.Map | null {
+    return this.map;
+  }
+
   destroy(): void {
     this.map?.remove();
     this.map = null;

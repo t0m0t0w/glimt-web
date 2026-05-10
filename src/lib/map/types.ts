@@ -15,5 +15,6 @@ export interface MapProvider {
   initialize(options: MapOptions): Promise<void>;
   setCenter(lng: number, lat: number): void;
   addMarker(options: MarkerOptions): void;
+  getMap(): any;
   destroy(): void;
 }

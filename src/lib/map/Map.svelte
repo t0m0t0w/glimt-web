@@ -1,6 +1,9 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
   import type { MapProvider } from './types';
+  import type { MapMouseEvent, MapboxGeoJSONFeature } from 'mapbox-gl';
+  import { parkStore } from '../parks/parkStore.svelte';
+  import { ParkLayer } from './layers/ParkLayer';
 
   interface Props {
     provider: MapProvider;
@@ -22,6 +25,13 @@
     }
   });
 
+  $effect(() => {
+    const map = provider.getMap();
+    if (map && map.isStyleLoaded()) {
+      ParkLayer.setup(map, parkStore.parks);
+    }
+  });
+
   onMount(async () => {
     if (container) {
       await provider.initialize({
@@ -29,6 +39,27 @@
         center,
         zoom
       });
+
+      const map = provider.getMap();
+      if (map) {
+        map.on('load', () => {
+          ParkLayer.setup(map, parkStore.parks);
+        });
+
+        map.on('click', ParkLayer.LAYER_ID, (e: MapMouseEvent & { features?: MapboxGeoJSONFeature[] }) => {
+          if (e.features && e.features.length > 0) {
+            const id = e.features[0].id;
+            parkStore.selectPark(id?.toString() ?? null);
+          }
+        });
+
+        map.on('mouseenter', ParkLayer.LAYER_ID, () => {
+          map.getCanvas().style.cursor = 'pointer';
+        });
+        map.on('mouseleave', ParkLayer.LAYER_ID, () => {
+          map.getCanvas().style.cursor = '';
+        });
+      }
     }
   });
 
